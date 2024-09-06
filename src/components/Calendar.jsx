@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Popup from './Popup';
 import EditTaskPopup from './EditTaskPopup';
 import { FaTrash } from 'react-icons/fa';
+import { CalendarStyles as styles } from './ComponentStyles'; // Importando os estilos do arquivo separado
 
 const Calendar = ({ year, month, onTaskUpdated, reload }) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -24,7 +25,7 @@ const Calendar = ({ year, month, onTaskUpdated, reload }) => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      
+
       try {
         const response = await fetch(`http://localhost:8080/api/appointments/check?date=${formattedDate}`);
         const hasAppointment = await response.json();
@@ -117,20 +118,20 @@ const Calendar = ({ year, month, onTaskUpdated, reload }) => {
     fetch(`http://localhost:8080/api/appointments/delete/${idSchedule}`, {
       method: 'DELETE',
     })
-    .then(response => {
-      if (response.ok) {
-        fetchAppointmentDetails(); // Recarrega os compromissos após a exclusão
-        onTaskUpdated(); // Atualiza o drawer e os slots do calendário após a exclusão
-      } else {
-        return response.text().then((text) => {
-          throw new Error(text || 'Erro ao excluir a tarefa.');
-        });
-      }
-    })
-    .catch(error => {
-      console.error("Erro ao excluir a tarefa:", error);
-      alert(error.message || "Erro ao excluir a tarefa.");
-    });
+      .then(response => {
+        if (response.ok) {
+          fetchAppointmentDetails(); // Recarrega os compromissos após a exclusão
+          onTaskUpdated(); // Atualiza o drawer e os slots do calendário após a exclusão
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text || 'Erro ao excluir a tarefa.');
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Erro ao excluir a tarefa:", error);
+        alert(error.message || "Erro ao excluir a tarefa.");
+      });
   };
 
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -145,18 +146,18 @@ const Calendar = ({ year, month, onTaskUpdated, reload }) => {
 
   const slots = [
     ...prevMonthDays.map(day => ({
-      day, 
-      currentMonth: false, 
+      day,
+      currentMonth: false,
       isPast: false,
     })),
     ...currentMonthDays.map(day => ({
-      day, 
-      currentMonth: true, 
+      day,
+      currentMonth: true,
       isPast: (year < currentYear || (year === currentYear && month < currentMonth) || (year === currentYear && month === currentMonth && day < currentDay))
     })),
     ...nextMonthDays.map(day => ({
-      day, 
-      currentMonth: false, 
+      day,
+      currentMonth: false,
       isPast: false,
     })),
   ];
@@ -176,23 +177,23 @@ const Calendar = ({ year, month, onTaskUpdated, reload }) => {
               </div>
             ))}
             {slots.map((slot, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 style={{
                   ...styles.slot,
                   backgroundColor: slot.currentMonth && appointments[slot.day]
-                    ? '#28a745' 
+                    ? '#28a745'
                     : slot.currentMonth && slot.isPast && appointments[slot.day]
-                    ? '#ffcccc' // Vermelho claro para dias passados com atividades
-                    : 'rgba(0, 0, 0, 0.8)',
-                  color: slot.currentMonth 
+                      ? '#ffcccc' // Vermelho claro para dias passados com atividades
+                      : 'rgba(0, 0, 0, 0.8)',
+                  color: slot.currentMonth
                     ? (slot.isPast ? (appointments[slot.day] ? '#8b0000' : '#721c24') : '#fff') // Vermelho escuro se for passado com atividade
                     : '#721c24',
-                  cursor: (slot.currentMonth && slot.isPast && appointments[slot.day]) 
-                    ? 'pointer' 
-                    : (slot.currentMonth && !slot.isPast) 
-                    ? 'pointer' 
-                    : 'not-allowed',
+                  cursor: (slot.currentMonth && slot.isPast && appointments[slot.day])
+                    ? 'pointer'
+                    : (slot.currentMonth && !slot.isPast)
+                      ? 'pointer'
+                      : 'not-allowed',
                 }}
                 onClick={() => handleDayClick(slot)}
               >
@@ -211,14 +212,14 @@ const Calendar = ({ year, month, onTaskUpdated, reload }) => {
             <table style={styles.appointmentTable}>
               <tbody>
                 {appointmentDetails.map((appointment) => (
-                  <tr 
-                    key={appointment.idSchedule} 
+                  <tr
+                    key={appointment.idSchedule}
                     style={styles.taskRow}
                   >
                     <td style={styles.iconCell}>
-                      <FaTrash 
-                        style={styles.trashIcon} 
-                        onClick={() => handleTaskDelete(appointment.idSchedule)} 
+                      <FaTrash
+                        style={styles.trashIcon}
+                        onClick={() => handleTaskDelete(appointment.idSchedule)}
                       />
                     </td>
                     <td style={styles.timeCell} onClick={() => handleTaskClick(appointment)}>
@@ -237,76 +238,16 @@ const Calendar = ({ year, month, onTaskUpdated, reload }) => {
         </Popup>
       )}
       {selectedTask && (
-        <EditTaskPopup 
-          show={!!selectedTask} 
-          onClose={closeEditPopup} 
-          task={selectedTask} 
-          date={`${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`} 
-          onTaskUpdated={handleTaskUpdatedInternal} 
+        <EditTaskPopup
+          show={!!selectedTask}
+          onClose={closeEditPopup}
+          task={selectedTask}
+          date={`${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`}
+          onTaskUpdated={handleTaskUpdatedInternal}
         />
       )}
     </div>
   );
-};
-
-const styles = {
-  calendar: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
-    gap: '5px',
-    padding: '10px',
-  },
-  slot: {
-    border: '1px solid #ccc',
-    borderRadius: '10px',
-    padding: '10px',
-    textAlign: 'center',
-    fontSize: '14px',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Fundo preto translúcido para os slots
-    color: '#fff',
-  },
-  loadingContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100px', // Define o tamanho mínimo da área de loading
-  },
-  loadingGif: {
-    width: '100px', // Define o tamanho do GIF de carregamento
-  },
-  popupTitle: {
-    textAlign: 'center',
-    color: '#000', // Cor preta para a data no popup
-    fontStyle: 'italic', // Estilo itálico para a data
-  },
-  appointmentTable: {
-    width: '100%',
-    borderCollapse: 'collapse',
-  },
-  taskRow: {
-    cursor: 'pointer',
-    borderBottom: '1px solid #ccc',
-    transition: 'background-color 0.2s ease',
-  },
-  iconCell: {
-    width: '40px',
-    textAlign: 'center',
-  },
-  trashIcon: {
-    color: 'red',
-    cursor: 'pointer',
-  },
-  timeCell: {
-    border: '1px solid #ccc',
-    padding: '8px',
-    textAlign: 'left',
-    width: '150px',
-  },
-  descriptionCell: {
-    border: '1px solid #ccc',
-    padding: '8px',
-    textAlign: 'left',
-  },
 };
 
 export default Calendar;

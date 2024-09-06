@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { TodayDrawerStyles as styles } from './ComponentStyles'; // Importando os estilos
 
 const TodayDrawer = ({ reload }) => {
   const [tasks, setTasks] = useState([]);
@@ -25,42 +26,6 @@ const TodayDrawer = ({ reload }) => {
 
     fetchTodayTasks();
   }, [today, reload]); // O drawer será recarregado sempre que `reload` mudar
-
-  const styles = {
-    drawer: {
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      width: '300px',
-      height: '100vh',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Cor preta semitransparente
-      boxShadow: '2px 0 5px rgba(0, 0, 0, 0.1)',
-      padding: '20px',
-      overflowY: 'auto',
-      zIndex: 1000,
-      color: '#fff', // Texto branco para melhor contraste com o fundo
-    },
-    title: {
-      textAlign: 'center',
-      marginBottom: '20px',
-      color: '#fff',
-    },
-    taskItem: {
-      borderBottom: '1px solid #ddd',
-      padding: '10px 0',
-      color: '#fff',
-    },
-    taskText: {
-      margin: '5px 0',
-    },
-    strongText: {
-      fontWeight: 'bold',
-      color: '#fff',
-    },
-    message: {
-      color: '#fff', // Cor branca para o texto da mensagem
-    }
-  };
 
   return (
     <div style={styles.drawer}>

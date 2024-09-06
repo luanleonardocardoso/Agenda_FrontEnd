@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Popup from './Popup';
+import { EditTaskPopupStyles as styles } from './ComponentStyles'; // Importando os estilos
 
 const EditTaskPopup = ({ show, onClose, task, date, onTaskUpdated }) => {
   const [taskDate, setTaskDate] = useState('');
@@ -109,50 +110,6 @@ const EditTaskPopup = ({ show, onClose, task, date, onTaskUpdated }) => {
       </div>
     </Popup>
   );
-};
-
-const styles = {
-  title: {
-    marginBottom: '20px',
-    textAlign: 'center',
-  },
-  formGroup: {
-    width: '100%',
-    marginBottom: '15px',
-    textAlign: 'left',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  label: {
-    alignSelf: 'flex-start',
-    marginBottom: '5px',
-    fontWeight: 'bold',
-  },
-  input: {
-    width: '90%',
-    padding: '8px',
-    fontSize: '16px',
-  },
-  textarea: {
-    width: '90%',
-    padding: '8px',
-    fontSize: '16px',
-    minHeight: '80px',
-    resize: 'none',
-  },
-  buttonGroup: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  button: {
-    padding: '10px 15px',
-    fontSize: '16px',
-    cursor: 'pointer',
-    flex: 1,
-    margin: '0 5px',
-  },
 };
 
 export default EditTaskPopup;
