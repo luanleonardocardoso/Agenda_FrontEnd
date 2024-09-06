@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import Popup from './Popup';
-import { EditTaskPopupStyles as styles } from './ComponentStyles'; // Importando os estilos
+import { EditTaskPopupStyles as styles } from './ComponentStyles';
 
+// Componente para editar uma tarefa, recebendo as props
 const EditTaskPopup = ({ show, onClose, task, date, onTaskUpdated }) => {
-  const [taskDate, setTaskDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [description, setDescription] = useState('');
+  // Estados para armazenar os valores da tarefa editada
+  const [taskDate, setTaskDate] = useState(''); 
+  const [startTime, setStartTime] = useState(''); 
+  const [endTime, setEndTime] = useState(''); 
+  const [description, setDescription] = useState(''); 
   const [isModified, setIsModified] = useState(false);
 
+  // Preenche os campos quando o popup é aberto
   useEffect(() => {
     if (show && task) {
-      setTaskDate(date || ''); 
+      setTaskDate(date || '');
       setStartTime(task.initialScheduledTime);
       setEndTime(task.finalScheduledTime);
       setDescription(task.description);
-      setIsModified(false); 
+      setIsModified(false);
     }
-  }, [show, task, date]);
+  }, [show, task, date]); // Executa sempre que 'show', 'task' ou 'date' mudarem
 
+  // Função para lidar com mudanças nos campos de input
   const handleInputChange = (setter, originalValue) => (e) => {
     setter(e.target.value);
     if (e.target.value !== originalValue) {
-      setIsModified(true); 
+      setIsModified(true);
     }
   };
 
+  // Função para salvar as alterações feitas na tarefa
   const handleSave = () => {
     const updatedTask = {
       idSchedule: task.idSchedule,
@@ -35,6 +40,7 @@ const EditTaskPopup = ({ show, onClose, task, date, onTaskUpdated }) => {
       description: description,
     };
 
+    // Faz uma requisição à API para atualizar a tarefa
     fetch('http://localhost:8080/api/appointments/update', {
       method: 'POST',
       headers: {
@@ -55,7 +61,7 @@ const EditTaskPopup = ({ show, onClose, task, date, onTaskUpdated }) => {
     .then(message => {
       console.log(message);
       onClose();
-      onTaskUpdated(); 
+      onTaskUpdated();
     })
     .catch(error => {
       alert(error.message);

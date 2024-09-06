@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { AddTaskPopupStyles } from './ComponentStyles'; // Importa os estilos do Styles.js
+import React, { useState, useEffect } from 'react'; 
+import { AddTaskPopupStyles } from './ComponentStyles';
 
 const AddTaskPopup = ({ show, onClose, onTaskAdded }) => {
-  const [date, setDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [description, setDescription] = useState('');
-  const [errors, setErrors] = useState({});
-  const [isSaving, setIsSaving] = useState(false);
+  // Define estados para os campos do formulário e controle de erros
+  const [date, setDate] = useState(''); 
+  const [startTime, setStartTime] = useState(''); 
+  const [endTime, setEndTime] = useState(''); 
+  const [description, setDescription] = useState(''); 
+  const [errors, setErrors] = useState({}); 
+  const [isSaving, setIsSaving] = useState(false); 
   const [apiError, setApiError] = useState('');
 
+  // reseta os campos quando o popup é exibido
   useEffect(() => {
     if (show) {
+      // Limpa todos os campos quando o popup é aberto.
       setDate('');
       setStartTime('');
       setEndTime('');
@@ -19,10 +22,12 @@ const AddTaskPopup = ({ show, onClose, onTaskAdded }) => {
       setErrors({});
       setApiError('');
     }
-  }, [show]);
+  }, [show]); // Dependência em 'show' para rodar sempre que o valor mudar.
 
+  // Se o popup não estiver visível, retorna null e não renderiza o componente.
   if (!show) return null;
 
+  // Função para validar os campos do formulário
   const validateFields = () => {
     const newErrors = {};
     if (!date) newErrors.date = 'A data é obrigatória';
@@ -32,6 +37,7 @@ const AddTaskPopup = ({ show, onClose, onTaskAdded }) => {
     return newErrors;
   };
 
+  // Função para salvar a nova tarefa
   const handleSave = () => {
     const validationErrors = validateFields();
     if (Object.keys(validationErrors).length > 0) {
@@ -39,8 +45,9 @@ const AddTaskPopup = ({ show, onClose, onTaskAdded }) => {
       return;
     }
 
-    setIsSaving(true);
+    setIsSaving(true); // Define que está salvando.
 
+    // Cria o objeto de agendamento com os dados do formulário.
     const newAppointment = {
       daySchedule: date,
       initialScheduledTime: startTime,
@@ -48,6 +55,7 @@ const AddTaskPopup = ({ show, onClose, onTaskAdded }) => {
       description: description,
     };
 
+    // Faz uma requisição para a API para adicionar a tarefa.
     fetch('http://localhost:8080/api/appointments/add', {
       method: 'POST',
       headers: {
@@ -57,24 +65,24 @@ const AddTaskPopup = ({ show, onClose, onTaskAdded }) => {
     })
       .then(response => {
         if (response.ok) {
-          return response.text();
+          return response.text(); // Se a resposta for OK, retorna o texto da resposta.
         } else if (response.status === 400) {
           return response.text().then(errorMessage => {
-            throw new Error(errorMessage);
+            throw new Error(errorMessage); // Lança um erro personalizado se a resposta for 400 (bad request).
           });
         }
-        throw new Error('Falha ao adicionar tarefa');
+        throw new Error('Falha ao adicionar tarefa'); // Lança um erro genérico se a resposta não for 200 ou 400.
       })
       .then(message => {
         console.log(message);
-        onClose();
-        onTaskAdded();
+        onClose(); // Fecha o popup.
+        onTaskAdded(); // Notifica que a tarefa foi adicionada.
       })
       .catch(error => {
-        setApiError(error.message);
+        setApiError(error.message); // Define o erro da API no estado, para exibir na interface.
       })
       .finally(() => {
-        setIsSaving(false);
+        setIsSaving(false); // Finaliza o estado de salvamento, habilitando os botões novamente.
       });
   };
 
@@ -88,7 +96,7 @@ const AddTaskPopup = ({ show, onClose, onTaskAdded }) => {
           <input
             type="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={(e) => setDate(e.target.value)} // Atualiza a data ao mudar o valor.
             style={{ ...AddTaskPopupStyles.input, borderColor: errors.date ? 'red' : '#ccc' }}
           />
           {errors.date && <span style={AddTaskPopupStyles.errorText}>{errors.date}</span>}

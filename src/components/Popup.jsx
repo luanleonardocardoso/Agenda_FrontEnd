@@ -1,6 +1,7 @@
 import React from 'react';
-import { PopupStyles as styles } from './ComponentStyles'; // Importando os estilos
+import { PopupStyles as styles } from './ComponentStyles';
 
+// Função Popup que recebe as props
 const Popup = ({ show, onClose, children }) => {
   if (!show) return null;
 
