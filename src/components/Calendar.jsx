@@ -50,9 +50,9 @@ const Calendar = ({ year, month, onTaskUpdated, reload }) => {
       setLoading(true); // Mostra o estado de carregamento
       await fetchAppointmentsForMonth(); // Busca compromissos para o mês
       setTimeout(() => {
-        setLoading(false); // Desativa o carregamento após 2,5 segundos
+        setLoading(false); // Desativa o carregamento após 1 segundo
         setIsLoaded(true); // Marca o calendário como carregado
-      }, 1500); // Simula um atraso de 1,5 segundos
+      }, 1000); // Simula um atraso de 1 segundo
     };
 
     loadData(); // Chama a função de carregamento de dados

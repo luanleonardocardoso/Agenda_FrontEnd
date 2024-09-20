@@ -5,7 +5,7 @@ import { TodayDrawerStyles as styles } from './ComponentStyles';
 const TodayDrawer = ({ reload }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString('en-CA');
 
   // Busca as tarefas sempre que o componente for montado ou o valor de `reload` mudar
   useEffect(() => {
@@ -57,4 +57,4 @@ const TodayDrawer = ({ reload }) => {
   );
 };
 
-export default TodayDrawer; // Exporta o componente para ser utilizado em outras partes da aplicação
+export default TodayDrawer;
